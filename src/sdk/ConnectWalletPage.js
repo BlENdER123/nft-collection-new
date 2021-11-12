@@ -405,6 +405,7 @@ function ConnectWalletPage() {
 							(data) => {
 								console.log(data);
 
+								let addr = data.data.address;
 								let promiseAcc = getAccType2(data.data.address);
 
 								promiseAcc.then(
@@ -412,7 +413,7 @@ function ConnectWalletPage() {
 										let acc = data.acc_type;
 
 										if (acc === 1) {
-											localStorage.setItem("address", data.data.address);
+											localStorage.setItem("address", addr);
 											setCurentPageLogin(curentPageLogin + 1);
 										} else {
 											setErrorModal([
