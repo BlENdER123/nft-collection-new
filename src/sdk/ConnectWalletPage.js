@@ -398,38 +398,42 @@ function ConnectWalletPage() {
 				promiseKeys.then(
 					(data) => {
 						let addr = data.public;
-						let promiseAcc = getAccType2(data.public);
+						console.log(data);
+						let promiseAddr = onSharding(addr);
 
-						promiseAcc.then(
+						promiseAddr.then(
 							(data) => {
-								let acc = data.acc_type;
+								console.log(data);
 
-								if (acc === 1) {
-									let promiseAddr = onSharding(addr);
+								let promiseAcc = getAccType2(data.data.address);
 
-									promiseAddr.then(
-										(data) => {
+								promiseAcc.then(
+									(data) => {
+										let acc = data.acc_type;
+
+										if (acc === 1) {
 											localStorage.setItem("address", data.data.address);
 											setCurentPageLogin(curentPageLogin + 1);
-										},
-										(error) => {
-											console.log(error);
-										},
-									);
-								} else {
-									setErrorModal([
-										{
-											hidden: true,
-											message: "Incorrect seed phrase",
-										},
-									]);
-								}
+										} else {
+											setErrorModal([
+												{
+													hidden: true,
+													message: "Incorrect seed phrase",
+												},
+											]);
+										}
+									},
+									(error) => {
+										console.log(error);
+									},
+								);
 							},
 							(error) => {
 								console.log(error);
 							},
 						);
 					},
+
 					(error) => {
 						console.log(error);
 					},
