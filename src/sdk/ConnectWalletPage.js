@@ -373,6 +373,7 @@ function ConnectWalletPage() {
 					}
 				},
 				(error) => {
+					setLoader(false);
 					console.log(error); // вывести ошибку
 				},
 			);
