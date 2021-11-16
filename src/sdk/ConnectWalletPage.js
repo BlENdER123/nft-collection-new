@@ -10,6 +10,7 @@ import {DEXClientContract} from "../extensions/contracts/DEXClientMainNet.js";
 import {DEXRootContract} from "../extensions/contracts/DEXRoot.js";
 import {DEXConnectorContract} from "../extensions/contracts/DEXConnector.js";
 import {TONTokenWalletContract} from "../extensions/contracts/TONTokenWallet.js";
+//import {Loader} from "../components/Loader/Loader.js";
 
 const {TonClient} = require("@tonclient/core");
 //const {Account} = require("@tonclient/appkit");
@@ -67,6 +68,8 @@ function ConnectWalletPage() {
 			message: "",
 		},
 	]);
+
+	const [loader, setLoader] = useState(false);
 
 	const aes = new pidCrypt.AES.CBC();
 
@@ -188,7 +191,7 @@ function ConnectWalletPage() {
 		console.log("clientSet", clientSet);
 
 		setClientData([clientSet, clientKeys]);
-
+		setLoader(false);
 		return [clientSet, clientKeys];
 	}
 
@@ -283,6 +286,15 @@ function ConnectWalletPage() {
 		}
 	}
 
+	function PrevPage() {
+		if (curentPage === 1) {
+			setCurentPageLogin(0);
+			setCurentPage(0);
+		} else {
+			setCurentPage(curentPage - 1);
+		}
+	}
+
 	function NextPage() {
 		if (curentPage === 0) {
 			setCurentPageLogin(99);
@@ -336,18 +348,22 @@ function ConnectWalletPage() {
 		if (curentPage === 4) {
 			setCurentPage(curentPage + 1);
 			console.log(seed);
+			setLoader(true);
 			console.log(prepareClientDataForDeploy(seed));
 			console.log(addr);
+			console.log(loader);
 		}
 		if (curentPage === 5) {
 			let bal = getClientBalance(addr);
-
+			setLoader(true);
 			bal.then(
 				(data) => {
 					if (data > 1) {
+						setLoader(false);
 						deployClient(clientData[0], clientData[1]);
 						setCurentPage(curentPage + 1);
 					} else {
+						setLoader(false);
 						setErrorModal([
 							{
 								hidden: true,
@@ -364,6 +380,15 @@ function ConnectWalletPage() {
 		if (curentPage === 6) {
 			setCurentPage(99);
 			setCurentPageLogin(1);
+		}
+	}
+
+	function PrevPageLogin() {
+		if (curentPageLogin === 1) {
+			setCurentPageLogin(0);
+			setCurentPage(0);
+		} else {
+			setCurentPageLogin(curentPageLogin - 1);
 		}
 	}
 
@@ -394,6 +419,8 @@ function ConnectWalletPage() {
 				let temp = [inputL1, inputL2, inputL3, inputL4];
 				let pass = temp.join("");
 
+				setLoader(true);
+
 				let promiseKeys = getClientKeys(seedLogin);
 				promiseKeys.then(
 					(data) => {
@@ -413,9 +440,11 @@ function ConnectWalletPage() {
 										let acc = data.acc_type;
 
 										if (acc === 1) {
+											setLoader(false);
 											localStorage.setItem("address", addr);
 											setCurentPageLogin(curentPageLogin + 1);
 										} else {
+											setLoader(false);
 											setErrorModal([
 												{
 													hidden: true,
@@ -425,17 +454,26 @@ function ConnectWalletPage() {
 										}
 									},
 									(error) => {
+										setLoader(false);
 										console.log(error);
 									},
 								);
 							},
 							(error) => {
+								setLoader(false);
 								console.log(error);
 							},
 						);
 					},
 
 					(error) => {
+						setLoader(false);
+						setErrorModal([
+							{
+								hidden: true,
+								message: "Incorrect seed phrase",
+							},
+						]);
 						console.log(error);
 					},
 				);
@@ -573,10 +611,10 @@ function ConnectWalletPage() {
 		}
 	}
 
-	function resetPages() {
-		setCurentPage(0);
-		setCurentPageLogin(0);
-	}
+	// function resetPages() {
+	// 	setCurentPage(0);
+	// 	setCurentPageLogin(0);
+	// }
 
 	return (
 		<div
@@ -586,15 +624,16 @@ function ConnectWalletPage() {
 					: "modal-connect"
 			}
 		>
+			<div className={loader ? "lds-dual-ring" : "hide"}></div>
 			<div
 				className={
 					curentPage === 0 && errorModal[0].hidden === false ? "page" : "hide"
 				}
 			>
-				<button className="close" onClick={resetPages}>
+				{/* <button className="close" onClick={resetPages}>
 					<span></span>
 					<span></span>
-				</button>
+				</button> */}
 				<div className="title">Welcome to DefiSpace!</div>
 				<div className="content content-first">
 					<button className="connect-btn zeropage-btn" onClick={NextPageLogin}>
@@ -612,10 +651,10 @@ function ConnectWalletPage() {
 						: "hide"
 				}
 			>
-				<button className="close" onClick={resetPages}>
+				{/* <button className="close" onClick={resetPages}>
 					<span></span>
 					<span></span>
-				</button>
+				</button> */}
 				<div className="title">Enter your seed phrase.</div>
 				<div className="seed-enter">
 					<textarea
@@ -683,10 +722,10 @@ function ConnectWalletPage() {
 					curentPage === 1 && errorModal[0].hidden === false ? "page" : "hide"
 				}
 			>
-				<button className="close" onClick={resetPages}>
+				{/* <button className="close" onClick={resetPages}>
 					<span></span>
 					<span></span>
-				</button>
+				</button> */}
 				<div className="title">Welcome to DefiSpace!</div>
 				<div className="subtitle">
 					Just read the user`s agreement and set pin for registration
@@ -832,7 +871,7 @@ function ConnectWalletPage() {
 						: "hide"
 				}
 			>
-				<div className="dots">
+				{/* <div className="dots">
 					<button
 						className={curentPage === 1 ? "active dot" : "dot"}
 						onClick={() => setCurentPage(1)}
@@ -857,9 +896,15 @@ function ConnectWalletPage() {
 						className={curentPage === 6 ? "active dot" : "dot"}
 						onClick={() => setCurentPage(6)}
 					></button>
-				</div>
+				</div> */}
 				<div className="break"></div>
 				<div className="next">
+					<button
+						className={curentPage === 6 ? "hide" : "connect-btn"}
+						onClick={PrevPage}
+					>
+						Back
+					</button>
 					<button
 						className={curentPage !== 5 ? "hide" : "connect-btn"}
 						onClick={() => {
@@ -900,7 +945,7 @@ function ConnectWalletPage() {
 						: "hide"
 				}
 			>
-				<div className="dots">
+				{/* <div className="dots">
 					<button
 						className={curentPageLogin === 1 ? "active dot" : "dot"}
 						onClick={() => setCurentPageLogin(1)}
@@ -913,13 +958,17 @@ function ConnectWalletPage() {
 						className={curentPageLogin === 3 ? "active dot" : "dot"}
 						onClick={() => setCurentPageLogin(2)}
 					></button>
-				</div>
+				</div> */}
 				<div className="break"></div>
 				<div className="next">
 					<button
-						className={
-							curentPageLogin !== 1 ? "hide" : "connect-btn zeropage-btn"
-						}
+						className={curentPageLogin === 3 ? "hide" : "connect-btn"}
+						onClick={PrevPageLogin}
+					>
+						Back
+					</button>
+					<button
+						className={curentPageLogin !== 1 ? "hide" : "connect-btn"}
 						onClick={NextPageLogin}
 					>
 						Connect
