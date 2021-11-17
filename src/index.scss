@@ -98,6 +98,38 @@ a:hover {
 	border-radius: 50px;
 	background: linear-gradient(to top, #3569f0, #6f27e4);
 }
+.acc-info {
+	display: flex;
+}
+.acc-info > .balance {
+	width: 150px;
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #fff;
+	border-radius: 50px;
+	background: linear-gradient(to top, #3569f0, #6f27e4);
+	margin-right: 10px;
+}
+.acc-info > .balance > .refresh-bal {
+	background: transparent;
+	border-radius: 50%;
+	position: absolute;
+	right: 5px;
+	top: 50%;
+	transform: translateY(-50%);
+	border: 1px solid #fff;
+	width: 35px;
+	height: 35px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+}
+.acc-info > .balance > .refresh-bal img {
+	width: 100%;
+}
 .acc > .content {
 	height: 100%;
 	position: relative;
