@@ -1,5 +1,5 @@
 {
-	"homepage": "https://BlENdER123.github.io/ssi-site",
+	"homepage": "https://BlENdER123.github.io/nft-collection",
 	"name": "my-swap",
 	"version": "1.0.0",
 	"description": "",
@@ -62,6 +62,7 @@
 		"@svgr/webpack": "^5.5.0",
 		"@types/jest": "^27.0.1",
 		"babel-loader": "^8.2.2",
+		"babel-plugin-transform-react-statements": "^0.7.3",
 		"babel-polyfill": "^6.26.0",
 		"bip39": "^3.0.4",
 		"copy-webpack-plugin": "^7.0.0",
@@ -74,6 +75,7 @@
 		"husky": "^7.0.2",
 		"jest": "^27.2.0",
 		"lint-staged": "^11.1.2",
+		"merge-images": "^2.0.0",
 		"mini-css-extract-plugin": "^1.5.0",
 		"node-sass": "^5.0.0",
 		"prettier": "2.4.1",

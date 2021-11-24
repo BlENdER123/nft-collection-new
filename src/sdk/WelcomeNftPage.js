@@ -1,15 +1,15 @@
 import React from "react";
 import {HashRouter as Router} from "react-router-dom";
 
-function WelcomeDidPage() {
+function WelcomeNftPage() {
 	return (
 		<Router>
 			<div className="modal-w modal-welcome">
 				<div className="text">Welcome!</div>
 
-				<a href="#/login-did">
+				<a href="#/load-nft">
 					<button type="button" className="btn btn-secondary">
-						I want to create DID
+						I want to create NFT collection
 					</button>
 				</a>
 			</div>
@@ -17,4 +17,4 @@ function WelcomeDidPage() {
 	);
 }
 
-export default WelcomeDidPage;
+export default WelcomeNftPage;

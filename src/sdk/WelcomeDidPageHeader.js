@@ -36,17 +36,6 @@ function WelcomeDidPageHeader() {
 
 	const [bal, setBal] = useState();
 
-	// let bal1 = getClientBalance(localStorage.address);
-	// bal1.then(
-	// 	(data) => {
-	// 		let temp = String(data).slice(0,3)
-	// 		setBal(temp);
-	// 	},
-	// 	(error) => {
-	// 		console.log(error);
-	// 	}
-	// )
-
 	function refreshBal() {
 		let bal1 = getClientBalance(localStorage.address);
 		bal1.then(
@@ -63,12 +52,12 @@ function WelcomeDidPageHeader() {
 
 	return (
 		<div className="acc-info">
-			<div className="balance">
+			{/* <div className="balance">
 				<div className="bal">{bal} TON</div>
 				<button className="refresh-bal" onClick={refreshBal}>
 					<img src={refresh}></img>
 				</button>
-			</div>
+			</div> */}
 			<div className="acc">
 				<div className="acc-logo"></div>
 

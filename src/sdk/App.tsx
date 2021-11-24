@@ -7,8 +7,8 @@ import Context from './Context';
 
 import StartPage from './StartPage';
 import ConnectWalletPage from './ConnectWalletPage';
-import WelcomeDidPage from './WelcomeDidPage';
-import LoginDidPage from './LoginDidPage';
+import WelcomeDidPage from './WelcomeNftPage';
+import LoginDidPage from './LoadNftPage';
 import LoginPage from './LoginPage';
 import AppPage from './AppPage';
 

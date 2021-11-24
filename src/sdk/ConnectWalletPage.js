@@ -980,7 +980,7 @@ function ConnectWalletPage() {
 					>
 						Next
 					</button>
-					<a href="#/welcome-did" className={curentPageLogin < 3 ? "hide" : ""}>
+					<a href="#/welcome-nft" className={curentPageLogin < 3 ? "hide" : ""}>
 						<button className={curentPageLogin < 3 ? "hide" : "connect-btn"}>
 							Great!
 						</button>

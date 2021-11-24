@@ -42,6 +42,31 @@ function Header() {
 								path="/login"
 								component={WelcomeDidPageHeader}
 							></Route>
+							<Route
+								exact
+								path="/welcome-nft"
+								component={WelcomeDidPageHeader}
+							></Route>
+							<Route
+								exact
+								path="/load-nft"
+								component={WelcomeDidPageHeader}
+							></Route>
+							<Route
+								exact
+								path="/nft-customization"
+								component={WelcomeDidPageHeader}
+							></Route>
+							<Route
+								exact
+								path="/nft-generate"
+								component={WelcomeDidPageHeader}
+							></Route>
+							<Route
+								exact
+								path="/nft-collection"
+								component={WelcomeDidPageHeader}
+							></Route>
 							<Route exact path="/app" component={AppPageHeader}></Route>
 						</Switch>
 					</header>

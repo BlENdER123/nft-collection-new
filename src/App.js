@@ -104,10 +104,13 @@ import EnterSeed from "./sdk";
 import Context from "./sdk/Context";
 
 import ConnectWalletPage from "./sdk/ConnectWalletPage";
-import WelcomeDidPage from "./sdk/WelcomeDidPage";
-import LoginDidPage from "./sdk/LoginDidPage";
+import WelcomeNftPage from "./sdk/WelcomeNftPage";
+import LoadNftPage from "./sdk/LoadNftPage";
 import LoginPage from "./sdk/LoginPage";
 import AppPage from "./sdk/AppPage";
+import NftCustomization from "./sdk/NftCustomization";
+import NftGenerate from "./sdk/NftGenerate";
+import NftCollection from "./sdk/NftCollection";
 
 import Header from "./sdk/Header";
 
@@ -305,10 +308,21 @@ function App() {
 							{/* <Route exact path="/connect-wallet" component={ConnectWalletPage}></Route> */}
 							<Route
 								exact
-								path="/welcome-did"
-								component={WelcomeDidPage}
+								path="/welcome-nft"
+								component={WelcomeNftPage}
 							></Route>
-							<Route exact path="/login-did" component={LoginDidPage}></Route>
+							<Route exact path="/load-nft" component={LoadNftPage}></Route>
+							<Route
+								exact
+								path="/nft-customization"
+								component={NftCustomization}
+							></Route>
+							<Route exact path="/nft-generate" component={NftGenerate}></Route>
+							<Route
+								exact
+								path="/nft-collection"
+								component={NftCollection}
+							></Route>
 							<Route exact path="/login" component={LoginPage}></Route>
 							<Route exact path="/app" component={AppPage}></Route>
 						</Switch>
