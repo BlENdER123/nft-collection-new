@@ -114,7 +114,20 @@ function LoadNftPage() {
 		image.onload = function () {
 			//console.log(image.width);
 
-			setSrc(URL.createObjectURL(file));
+			var canvas = document.createElement("canvas");
+			canvas.width = image.width;
+			canvas.height = image.height;
+
+			var ctx = canvas.getContext("2d");
+			ctx.drawImage(image, 0, 0);
+
+			var dataURL = canvas.toDataURL("image/png");
+
+			//console.log(dataURL.replace(/^data:image\/(png|jpg);base64,/, ""));
+
+			let src = dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+
+			//setSrc(URL.createObjectURL(file));
 
 			let tempArr = [];
 			for (let i = 0; i < classArr1.length; i++) {
@@ -122,12 +135,12 @@ function LoadNftPage() {
 				if (classArr1[curentLayer].name == classArr1[i].name) {
 					if (temp.imgs[0] == undefined) {
 						temp.imgs = [];
-						temp.imgs.push(URL.createObjectURL(file));
+						temp.imgs.push(src);
 						temp.width = image.width;
 						temp.height = image.height;
 					} else {
 						if (temp.height == image.height && temp.width == image.width) {
-							temp.imgs.push(URL.createObjectURL(file));
+							temp.imgs.push(src);
 						} else {
 							setErrorModal({
 								hidden: true,
@@ -141,6 +154,28 @@ function LoadNftPage() {
 			console.log(tempArr);
 			setClassArr1(tempArr);
 		};
+	}
+
+	function removeImg(index) {
+		let tempArr = [];
+
+		for (let i = 0; i < classArr1.length; i++) {
+			let temp = classArr1[i];
+			let tempArrImg = [];
+			if (classArr1[curentLayer].name == classArr1[i].name) {
+				for (let j = 0; j < classArr1[i].imgs.length; j++) {
+					console.log(classArr1[i].imgs.length);
+					if (classArr1[i].imgs[j] != classArr1[i].imgs[index]) {
+						//console.log(1);
+						tempArrImg.push(classArr1[curentLayer].imgs[j]);
+					}
+				}
+				temp.imgs = tempArrImg;
+			}
+
+			tempArr.push(temp);
+		}
+		setClassArr1(tempArr);
 	}
 
 	function setNewLayerName(event) {
@@ -157,8 +192,52 @@ function LoadNftPage() {
 		setClassArr1(tempArr);
 	}
 
+	function getBase64Image(src) {
+		var img = new Image();
+		img.src = src;
+		img.onload = function () {
+			var canvas = document.createElement("canvas");
+			canvas.width = img.width;
+			canvas.height = img.height;
+
+			var ctx = canvas.getContext("2d");
+			ctx.drawImage(img, 0, 0);
+
+			var dataURL = canvas.toDataURL("image/png");
+
+			//console.log(dataURL.replace(/^data:image\/(png|jpg);base64,/, ""));
+
+			return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+		};
+	}
+
+	function getSrc(src) {
+		return "data:image/png;base64," + src;
+	}
+
 	function logData() {
 		console.log("-----------");
+
+		if (
+			width <= 0 ||
+			height <= 0 ||
+			width == undefined ||
+			height == undefined
+		) {
+			setErrorModal({
+				hidden: true,
+				message: "Enter size",
+			});
+			return;
+		}
+
+		if (width > 500 || height > 500) {
+			setErrorModal({
+				hidden: true,
+				message: "The size is too large",
+			});
+			return;
+		}
 
 		for (let i = 0; i < classArr1.length; i++) {
 			if (classArr1[i].height > height || classArr1[i].width > width) {
@@ -246,8 +325,12 @@ function LoadNftPage() {
 						{classArr1[curentLayer].imgs.map((item, index) => {
 							return (
 								<div class="img-element">
+									<div class="close" onClick={() => removeImg(index)}>
+										<span></span>
+										<span></span>
+									</div>
 									<div class="img">
-										<img src={item}></img>
+										<img src={getSrc(item)}></img>
 									</div>
 									<div class="break"></div>
 									<div class="name">
@@ -282,13 +365,13 @@ function LoadNftPage() {
 							Width{" "}
 							<input
 								type="text"
-								class="input-settings"
+								class="input-settings inputL"
 								onChange={(event) => setWidth(event.target.value)}
 							/>
 							Height{" "}
 							<input
 								type="text"
-								class="input-settings"
+								class="input-settings inputL"
 								onChange={(event) => setHeight(event.target.value)}
 							/>
 						</div>

@@ -89,6 +89,10 @@ function NftCustomization() {
 		setClassArr(tempArr);
 	}
 
+	function getSrc(src) {
+		return "data:image/png;base64," + src;
+	}
+
 	function logData() {
 		console.log("-----------");
 		console.log(classArr);
@@ -111,7 +115,7 @@ function NftCustomization() {
 							{classArr.map((item, index) => {
 								return (
 									<img
-										src={item.imgs[0]}
+										src={getSrc(item.imgs[0])}
 										style={{
 											left: item.x + "px",
 											top: item.y + "px",
@@ -121,7 +125,9 @@ function NftCustomization() {
 								);
 							})}
 						</div>
-						<button onClick={contrastBg}>Contrast bg</button>
+						<button class="contrast" onClick={contrastBg}>
+							Contrast background
+						</button>
 					</div>
 					<div class="nft-position">
 						<div class="menu-position">

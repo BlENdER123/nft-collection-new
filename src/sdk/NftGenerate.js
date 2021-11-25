@@ -13,6 +13,11 @@ function NftCustomization() {
 
 	const [collection, setCollection] = useState([]);
 
+	const [alert, setAlert] = useState({
+		hidden: false,
+		message: "",
+	});
+
 	let arrImg = [];
 	for (let i = 0; i < arr.length; i++) {
 		arrImg[i] = 0;
@@ -75,6 +80,7 @@ function NftCustomization() {
 	}
 
 	function split() {
+		alertM("Saved!");
 		let mergeArr = [];
 
 		let indexArr = [];
@@ -83,7 +89,7 @@ function NftCustomization() {
 			for (let j = 0; j < classArr[i].imgs.length; j++) {
 				if (classArr[i].imgs[j] == classArr[i].imgs[curentImg[i]]) {
 					mergeArr.push({
-						src: classArr[i].imgs[j],
+						src: getSrc(classArr[i].imgs[j]),
 						x: classArr[i].x,
 						y: classArr[i].y,
 					});
@@ -122,12 +128,44 @@ function NftCustomization() {
 		setCollection(tempCollection);
 	}
 
+	function getSrc(src) {
+		return "data:image/png;base64," + src;
+	}
+
+	function random() {
+		let temp = [];
+
+		for (let i = 0; i < classArr.length; i++) {
+			let length = classArr[i].imgs.length;
+			temp.push(Math.round(Math.random() * (length - 1 - 0) + 0));
+		}
+
+		setCurentImg(temp);
+	}
+
+	function alertM(text) {
+		setAlert({
+			hidden: true,
+			message: text,
+		});
+
+		setTimeout(function () {
+			setAlert({
+				hidden: false,
+				message: "",
+			});
+		}, 1000);
+	}
+
 	function logData() {
 		localStorage.setItem("collection", JSON.stringify(collection));
 	}
 
 	return (
 		<Router>
+			<div className={alert.hidden ? "alert-win" : "alert-win invisible"}>
+				{alert.message}
+			</div>
 			<div class="constructors">
 				<div className="modal-constructor constructor-position show">
 					<div class="nft-img">
@@ -141,7 +179,7 @@ function NftCustomization() {
 							{classArr.map((item, index) => {
 								return (
 									<img
-										src={item.imgs[curentImg[index]]}
+										src={getSrc(item.imgs[curentImg[index]])}
 										style={{
 											left: item.x + "px",
 											top: item.y + "px",
@@ -153,9 +191,13 @@ function NftCustomization() {
 
 							<img src={testImg} />
 						</div>
-						<button onClick={contrastBg}>Contrast bg</button>
+						<button class="contrast" onClick={contrastBg}>
+							Contrast background
+						</button>
 						<div class="buttons">
-							<button class="btn-standart">Randomize</button>
+							<button class="btn-standart" onClick={random}>
+								Randomize
+							</button>
 							<button class="btn-standart" onClick={split}>
 								Save
 							</button>
@@ -212,7 +254,7 @@ function NftCustomization() {
 										onClick={() => setImg(index)}
 									>
 										<div class="img">
-											<img src={item} />
+											<img src={getSrc(item)} />
 										</div>
 										<div class="break"></div>
 										<div class="name">
