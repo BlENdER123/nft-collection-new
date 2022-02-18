@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from "react";
 import {HashRouter as Router, Redirect} from "react-router-dom";
 
-function NftCustomization() {
+function NftCustomizationSingle() {
 	let arr = JSON.parse(localStorage.getItem("class"));
 	console.log(arr);
 
@@ -448,7 +448,7 @@ function NftCustomization() {
 							})}
 						</div>
 					</div>
-					{redirect ? <Redirect to="/nft-generate" /> : ""}
+					{redirect ? <Redirect to="/nft-generate-single" /> : ""}
 				</div>
 
 				<div class="footer">
@@ -481,4 +481,4 @@ function NftCustomization() {
 	);
 }
 
-export default NftCustomization;
+export default NftCustomizationSingle;

@@ -52,20 +52,19 @@ function WelcomeDidPageHeader() {
 
 	return (
 		<div className="acc-info">
-			{/* <div className="balance">
-				<div className="bal">{bal} TON</div>
-				<button className="refresh-bal" onClick={refreshBal}>
-					<img src={refresh}></img>
-				</button>
-			</div> */}
-			<div className="acc">
-				<div className="acc-logo"></div>
-
-				<div className="content">
-					<div className="acc-status">Connected</div>
-					<div className="break"></div>
+			<div class="acc-info1">
+				<div class="name">NFTour</div>
+				<div class="wallet">
+					<div className="acc-status">Connected:</div>
 					<div className="acc-wallet">{localStorage.address}</div>
 				</div>
+			</div>
+
+			<div class="pages">
+				<div class="page-element active">Home</div>
+				<div class="page-element">NFT Generator</div>
+				<div class="page-element">NFT Chapter Constructor</div>
+				<div class="page-element">FAQ</div>
 			</div>
 		</div>
 	);

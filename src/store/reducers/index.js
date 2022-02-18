@@ -10,6 +10,7 @@ import poolExplorer from "./poolExplorer";
 import enterSeedPhrase from "./enterSeedPhrase";
 import stakingReducer from "./stake";
 import limitOrders from "./limitOrders";
+import nftCollection from "./nftCollection";
 
 export default combineReducers({
 	appReducer,
@@ -23,4 +24,5 @@ export default combineReducers({
 	enterSeedPhrase,
 	stakingReducer,
 	limitOrders,
+	nftCollection,
 });

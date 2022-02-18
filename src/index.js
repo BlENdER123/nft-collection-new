@@ -8,7 +8,7 @@ import {Provider} from "react-redux";
 import {SnackbarProvider} from "notistack";
 import {StyledEngineProvider} from "@mui/material/styles";
 
-import Alert from "./components/Alert/Alert";
+//import Alert from "./components/Alert/Alert";
 import "./index.scss";
 import "bootstrap";
 import App from "./App";

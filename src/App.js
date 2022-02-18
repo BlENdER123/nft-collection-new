@@ -111,8 +111,18 @@ import AppPage from "./sdk/AppPage";
 import NftCustomization from "./sdk/NftCustomization";
 import NftGenerate from "./sdk/NftGenerate";
 import NftCollection from "./sdk/NftCollection";
-
+import GettingStarted from "./sdk/GetttingStartedPage";
+import CollectioMarket from "./sdk/CollectionMarket";
+import OpenPack from "./sdk/OpenPack";
 import Header from "./sdk/Header";
+import HowPage from "./sdk/HowPage";
+import ProfilePage from "./sdk/ProfilePage";
+import LoadNftPageSingle from "./sdk/LoadNftPageSingle";
+import NftCustomizationSingle from "./sdk/NftCustomizationSingle";
+import NftGenerateSingle from "./sdk/NftGenerateSingle";
+import NftSingle from "./sdk/NftSingle";
+import CollectionMarketPack from "./sdk/CollectionMarketPack";
+import NftDetails from "./sdk/NftDetails";
 
 // import "./sdk/App.css";
 
@@ -301,100 +311,59 @@ function App() {
 		<>
 			<Router>
 				<Context.Provider value={{status: status}}>
-					<div className="App">
-						<Header></Header>
-						<Switch>
-							<Route exact path="/" component={ConnectWalletPage}></Route>
-							{/* <Route exact path="/connect-wallet" component={ConnectWalletPage}></Route> */}
-							<Route
-								exact
-								path="/welcome-nft"
-								component={WelcomeNftPage}
-							></Route>
-							<Route exact path="/load-nft" component={LoadNftPage}></Route>
-							<Route
-								exact
-								path="/nft-customization"
-								component={NftCustomization}
-							></Route>
-							<Route exact path="/nft-generate" component={NftGenerate}></Route>
-							<Route
-								exact
-								path="/nft-collection"
-								component={NftCollection}
-							></Route>
-							<Route exact path="/login" component={LoginPage}></Route>
-							<Route exact path="/app" component={AppPage}></Route>
-						</Switch>
-					</div>
+					<Switch>
+						<Route exact path="/" component={WelcomeNftPage}></Route>
+						{/* <Route exact path="/connect-wallet" component={ConnectWalletPage}></Route> */}
+						{/* <Route exact path="/welcome-nft" component={WelcomeNftPage}></Route> */}
+						<Route exact path="/get-start" component={GettingStarted}></Route>
+						<Route exact path="/load-nft" component={LoadNftPage}></Route>
+						<Route
+							exact
+							path="/nft-customization"
+							component={NftCustomization}
+						></Route>
+						<Route exact path="/nft-generate" component={NftGenerate}></Route>
+						<Route
+							exact
+							path="/nft-collection"
+							component={NftCollection}
+						></Route>
+						<Route
+							exact
+							path="/load-nft-single"
+							component={LoadNftPageSingle}
+						></Route>
+						<Route
+							exact
+							path="/nft-customization-single"
+							component={NftCustomizationSingle}
+						></Route>
+						<Route
+							exact
+							path="/nft-generate-single"
+							component={NftGenerateSingle}
+						></Route>
+						<Route exact path="/nft-single" component={NftSingle}></Route>
+						<Route
+							exact
+							path="/collection-market"
+							component={CollectioMarket}
+						></Route>
+						<Route
+							exact
+							path="/collection-market-pack"
+							component={CollectionMarketPack}
+						></Route>
+						<Route exact path="/nft-details" component={NftDetails}></Route>
+						<Route exact path="/how" component={HowPage}></Route>
+						<Route exact path="/open-pack" component={OpenPack}></Route>
+						<Route exact path="/login" component={LoginPage}></Route>
+						<Route exact path="/app" component={AppPage}></Route>
+						<Route exact path="/profile" component={ProfilePage}></Route>
+					</Switch>
 				</Context.Provider>
 			</Router>
 		</>
-
-		// <>
-		// <button
-		// 	style={{fontSize: "16px", width: "100%"}}
-		// 	className="btn wallet-btn"
-		// 	onClick={() => dispatch(showEnterSeedPhraseRegister())}
-		// >
-		// 	Create a new Seed Phrase and Wallet
-		// </button>
-		// {enterSeedPhraseIsVisible === true && <EnterSeedPhrase />}
-		// <EnterSeed></EnterSeed>
-		// 	{/*{onloading && <div className="blockDiv"><Loader/></div>}*/}
-		// 	{visibleEnterSeedPhraseUnlock === true &&
-		// 		emptyStorage === false &&
-		// 		!onloading && <EnterPassword />}
-		// 	<div className="beta" onClick={onTipClosed}>
-		// 		Beta version. Use desktop Google Chrome
-		// 	</div>
-		// 	<Header />
-		// 	<Switch location={location}>
-		// 		{/* <Route exact path="/native-login" component={NativeLogin} />
-		// 		<Route exact path="/pool-explorer" component={PoolExplorer} />
-		// 		<Route exact path="/pool" component={Pool} />
-		// 		<Route exact path="/account" component={Account} />
-		// 		<Route exact path="/swap" component={Swap} />
-		// 		<Route exact path="/manage" component={Manage} />
-		// 		<Route exact path="/add-liquidity" component={AddLiquidity} />
-		// 		<Route exact path="/create-pair" component={CreatePair} />
-		// 		<Route exact path="/staking" component={Stacking} />
-		// 		<Route exact path="/wallet" component={Assets} />
-		// 		<Route exact path="/orders" component={LimitOrder} />
-		// 		<Route exact path="/">
-		// 			<Redirect from="/" to="/wallet" />
-		// 		</Route> */}
-
-		// 		{walletIsConnected ? (
-		// 			<>
-
-		// 				<Route exact path="/wallet/settings/keys" component={KeysBlock} />
-		// 				<Route exact path="/wallet/send" component={SendAssets} />
-		// 				<Route exact path="/wallet/receive" component={ReceiveAssets} />
-		// 				<Route exact path="/wallet/settings" component={WalletSettings} />
-		// 				<Route
-		// 					exact
-		// 					path="/wallet/deployAssets"
-		// 					component={AssetsListForDeploy}
-		// 				/>
-		// 				<Route
-		// 					exact
-		// 					path="/wallet/receive/receive-modal"
-		// 					component={AssetsModalReceive}
-		// 				/>
-		// 				<Route
-		// 					exact
-		// 					path="/wallet/send/send-modal"
-		// 					component={AssetsModal}
-		// 				/>
-		// 			</>
-		// 		) : null}
-		// 	</Switch>
-		// 	{popup.isVisible ? (
-		// 		<Popup type={popup.type} message={popup.message} link={popup.link} />
-		// 	) : null}
-		// 	{revealSeedPhraseIsVisible ? <RevealSeedPhrase /> : null}
-		// </>
 	);
 }
 

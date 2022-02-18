@@ -12,7 +12,7 @@ const pinataSecretKey =
 
 let nftArr = [];
 
-function NftCustomization() {
+function NftCustomizationSingle() {
 	let arr = JSON.parse(localStorage.getItem("class"));
 
 	const [classArr, setClassArr] = useState(arr);
@@ -176,7 +176,7 @@ function NftCustomization() {
 	// 	setCurentImg(tempArr);
 	// }
 
-	function split() {
+	async function split() {
 		let tempCurentImg = curentImg.join();
 		for (let i = 0; i < nftCombinations.length; i++) {
 			if (tempCurentImg == nftCombinations[i]) {
@@ -191,7 +191,6 @@ function NftCustomization() {
 		tempNftCombinations.push(tempCurentImg);
 		console.log(curentImg);
 
-		alertM("Saved!");
 		let mergeArr = [];
 
 		let indexArr = [];
@@ -240,6 +239,8 @@ function NftCustomization() {
 		console.log(tempCollection);
 
 		setCollection(tempCollection);
+		console.log(collection);
+		// await alertM("Saved!");
 	}
 
 	function getSrc(src) {
@@ -412,7 +413,7 @@ function NftCustomization() {
 		alertM("Generated " + uniqC + " uniq NFT");
 	}
 
-	function alertM(text) {
+	async function alertM(text) {
 		setAlert({
 			hidden: true,
 			message: text,
@@ -433,18 +434,7 @@ function NftCustomization() {
 		});
 	}
 
-	function logData() {
-		console.log(collection);
-
-		if (collection[0] === "" || collection[0] === undefined) {
-			console.log("Save at least one NFT");
-			setErrorModal({
-				hidden: true,
-				message: "Save at least one NFT",
-			});
-			return;
-		}
-
+	async function logData() {
 		if (colPrice === "" || colPrice === undefined || colPrice < 1) {
 			console.log("Set collection price");
 			setErrorModal({
@@ -463,10 +453,87 @@ function NftCustomization() {
 			return;
 		}
 
-		sessionStorage.setItem("colPrice", colPrice);
-		sessionStorage.setItem("royalty", royalty);
-		setRedirect(true);
-		localStorage.setItem("collection", JSON.stringify(collection));
+		let tempCurentImg = curentImg.join();
+		// for (let i = 0; i < nftCombinations.length; i++) {
+		// 	if (tempCurentImg == nftCombinations[i]) {
+		// 		setErrorModal({
+		// 			hidden: true,
+		// 			message: "Each nft must be unique",
+		// 		});
+		// 		return;
+		// 	}
+		// }
+		let tempNftCombinations = nftCombinations;
+		tempNftCombinations.push(tempCurentImg);
+		console.log(curentImg);
+
+		let mergeArr = [];
+
+		let indexArr = [];
+
+		for (let i = 0; i < classArr.length; i++) {
+			for (let j = 0; j < classArr[i].imgs.length; j++) {
+				if (classArr[i].imgs[j] == classArr[i].imgs[curentImg[i]]) {
+					mergeArr.push({
+						src: classArr[i].src[j],
+						x: classArr[i].x,
+						y: classArr[i].y,
+					});
+					indexArr.push(classArr[i].z_index);
+				}
+			}
+		}
+
+		for (let i = 0; i < indexArr.length; i++) {
+			for (let j = 0; j < indexArr.length; j++) {
+				if (indexArr[j] > indexArr[j + 1]) {
+					let temp = indexArr[j];
+					let temp1 = mergeArr[j];
+					indexArr[j] = indexArr[j + 1];
+					mergeArr[j] = mergeArr[j + 1];
+					indexArr[j + 1] = temp;
+					mergeArr[j + 1] = temp1;
+				}
+			}
+		}
+
+		console.log(indexArr);
+		console.log(mergeArr);
+
+		let tempCollection = [];
+		for (let i = 0; i < collection.length; i++) {
+			tempCollection[i] = collection[i];
+		}
+
+		mergeImages(mergeArr, {
+			width: localStorage.getItem("width"),
+			height: localStorage.getItem("height"),
+		}).then((b64) => {
+			tempCollection.push(b64);
+		});
+
+		console.log(tempCollection);
+
+		setCollection(tempCollection);
+		console.log(collection);
+		// await alertM("Saved!");
+
+		// if(collection[0] === "" || collection[0] === undefined) {
+		// 	console.log("Save at least one NFT");
+		// 	setErrorModal({
+		// 		hidden: true,
+		// 		message: "Save at least one NFT"
+		// 	});
+		// 	return;
+		// }
+
+		setTimeout(function () {
+			console.log(tempCollection);
+			sessionStorage.setItem("colPrice", colPrice);
+			sessionStorage.setItem("royalty", royalty);
+			localStorage.setItem("collection", JSON.stringify(tempCollection));
+			setRedirect(true);
+		}, 100);
 	}
 
 	return (
@@ -541,7 +608,7 @@ function NftCustomization() {
 								);
 							})}
 
-							<div class="title" style={{margin: "30px 0px 0px 0px"}}>
+							{/* <div class="title" style={{margin: "30px 0px 0px 0px"}}>
 								Settings
 							</div>
 							<div class="text">NFT Settings</div>
@@ -560,7 +627,7 @@ function NftCustomization() {
 							</div>
 							<div class="button-3-square" onClick={split}>
 								Save
-							</div>
+							</div> */}
 						</div>
 
 						<div class="modal-constructor modal-constructor-position">
@@ -593,7 +660,7 @@ function NftCustomization() {
 									style={{width: localStorage.getItem("width") + "px"}}
 									onClick={logData}
 								>
-									Create Collection
+									Create NFT
 								</div>
 							</div>
 						</div>
@@ -630,9 +697,9 @@ function NftCustomization() {
 							<div style={{margin: "20px 0px 0px 0px"}} class="title">
 								Price Settings
 							</div>
-							<div class="text">Set a price for your collection</div>
+							<div class="text">Set a price for your NFT</div>
 							<div class="price">
-								<div class="title">Collection Price</div>
+								<div class="title">NFT Price</div>
 								<input
 									placeholder="100.0000"
 									type="number"
@@ -655,7 +722,7 @@ function NftCustomization() {
 							</div>
 						</div>
 					</div>
-					{redirect ? <Redirect to="/nft-collection" /> : ""}
+					{redirect ? <Redirect to="/nft-single" /> : ""}
 				</div>
 
 				<div class="footer">
@@ -688,4 +755,4 @@ function NftCustomization() {
 	);
 }
 
-export default NftCustomization;
+export default NftCustomizationSingle;

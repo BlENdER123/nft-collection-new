@@ -77,4 +77,9 @@ module.exports = {
 			defaults: true,
 		}),
 	],
+	resolve: {
+		fallback: {
+			fs: false,
+		},
+	},
 };

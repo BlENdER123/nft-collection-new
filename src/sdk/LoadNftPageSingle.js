@@ -64,7 +64,7 @@ class MyClass {
 	}
 }
 
-function LoadNftPage() {
+function LoadNftPageSingle() {
 	//const {status} = useContext(Context);
 
 	const [classArr1, setClassArr1] = useState([
@@ -830,7 +830,7 @@ function LoadNftPage() {
 						<div class="break"></div>
 						{/* <a href="#/nft-customization"><div class="next" onClick={logData}>Next</div></a> */}
 
-						{redirect ? <Redirect to="/nft-customization" /> : ""}
+						{redirect ? <Redirect to="/nft-customization-single" /> : ""}
 					</div>
 				</div>
 
@@ -864,4 +864,4 @@ function LoadNftPage() {
 	);
 }
 
-export default LoadNftPage;
+export default LoadNftPageSingle;
