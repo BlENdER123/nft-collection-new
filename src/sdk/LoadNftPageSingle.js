@@ -1,9 +1,12 @@
 import React, {useContext, useState} from "react";
-import {useSelector, useDispatch} from "react-redux";
-import {HashRouter as Router, Redirect} from "react-router-dom";
+import {HashRouter as Router, Redirect, useHistory} from "react-router-dom";
 import Context from "./Context";
-import setImg from "../store/actions/nftCollection";
 //import 'idempotent-babel-polyfill';
+
+import Header from "./Header";
+import Footer from "./Footer";
+
+import {useDispatch, useSelector} from "react-redux";
 
 const axios = require("axios");
 //const fs = require('fs');
@@ -65,7 +68,10 @@ class MyClass {
 }
 
 function LoadNftPageSingle() {
+	let history = useHistory();
 	//const {status} = useContext(Context);
+	const dispatch = useDispatch();
+	const connectWallet = useSelector((state) => state.connectWallet);
 
 	const [classArr1, setClassArr1] = useState([
 		new MyClass("background", true, [], [], [], 0, 0, 0, 0, 0),
@@ -534,7 +540,6 @@ function LoadNftPageSingle() {
 
 		// console.log(tempBg);
 
-		setRedirect(true);
 		console.log(classArr1);
 
 		// window.nfts = classArr1;
@@ -551,18 +556,9 @@ function LoadNftPageSingle() {
 				projectDescription: projectDescription,
 			}),
 		);
-		// try {
-		// 	localStorage.setItem("class", JSON.stringify(classArr1));
-		// 	localStorage.setItem("width", width);
-		// 	localStorage.setItem("height", height);
-		// 	localStorage.setItem("curentLayer", curentLayer);
 
-		// } catch(e) {
-		// 	setErrorModal({
-		// 		hidden: true,
-		// 		message: "Your images are larger than 5 MB"
-		// 	})
-		// }
+		// setRedirect(true);
+		history.push("/nft-customization-single");
 	}
 
 	function closeError() {
@@ -591,52 +587,30 @@ function LoadNftPageSingle() {
 	// 	});
 	// }
 
+	function close() {
+		dispatch({type: "closeConnect"});
+		console.log(connectWallet);
+	}
+
 	return (
 		<Router>
 			<div
 				className={
-					errorModal.hidden === true || connect === true ? "error-bg" : "hide"
+					errorModal.hidden === true || connect === true || connectWallet
+						? "error-bg"
+						: "hide"
 				}
-			></div>
+			>
+				<span onClick={close}></span>
+			</div>
 			<div
 				className={
-					errorModal.hidden === true || connect === true
+					errorModal.hidden === true || connect === true || connectWallet
 						? "App-error"
 						: "App App2"
 				}
 			>
-				<div className="header header2">
-					<div className="container-header">
-						<div className="acc-info">
-							<div class="acc-info1">
-								<a href="#/">
-									<div class="name">NFTour</div>
-								</a>
-								{localStorage.address ? (
-									<div class="wallet">
-										<div className="acc-status">Connected:</div>
-										<div className="acc-wallet">{localStorage.address}</div>
-									</div>
-								) : (
-									""
-								)}
-							</div>
-
-							<div class="pages">
-								<a href="#/">
-									<div class="page-element">Home</div>
-								</a>
-								<a href="#/load-nft">
-									<div class="page-element active">NFT Generator</div>
-								</a>
-								<a href="#/collection-market">
-									<div class="page-element">NFT Collection Market</div>
-								</a>
-								<div class="page-element">FAQ</div>
-							</div>
-						</div>
-					</div>
-				</div>
+				<Header activeCat={1}></Header>
 
 				<div class="constructors">
 					<div class="container-header">
@@ -834,31 +808,7 @@ function LoadNftPageSingle() {
 					</div>
 				</div>
 
-				<div class="footer">
-					<div class="container-header">
-						<div class="footer-1">
-							<div class="name">RADIANCETEAM</div>
-							<div class="copyright">
-								© 2021, radianceteam.com
-								<br />
-								Terms of Service
-								<br />
-								Privacy Policy
-							</div>
-						</div>
-						<div class="footer-2">
-							<div class="pages">
-								<a href="https://t.me/DefiSpacecom">
-									<div class="page-element">Telegram</div>
-								</a>
-							</div>
-							<div class="email">
-								<span>For corporation</span>
-								<div class="text">info@radianceteam.com</div>
-							</div>
-						</div>
-					</div>
-				</div>
+				<Footer></Footer>
 			</div>
 		</Router>
 	);

@@ -1,8 +1,12 @@
 import React, {useState, PropTypes} from "react";
-import {connect} from "react-redux";
-import {HashRouter as Router} from "react-router-dom";
+// import {connect, useSelector} from "react-redux";
+import {HashRouter as Router, useHistory} from "react-router-dom";
 //import {main_screen_bg} from "../sdk/img/screenbg1.png"
 import ConnectWalletPage from "./ConnectWalletPage";
+import Header from "./Header";
+import Footer from "./Footer";
+
+import {useDispatch, useSelector} from "react-redux";
 
 import {
 	Link,
@@ -18,71 +22,50 @@ const pidCrypt = require("pidcrypt");
 require("pidcrypt/aes_cbc");
 
 function WelcomeNftPage() {
+	let history = useHistory();
+
+	const dispatch = useDispatch();
+
+	const connectWallet = useSelector((state) => state.connectWallet);
+
 	const [connectWal, setConnect] = useState(false);
+
+	function handleConnectClick() {
+		console.log(1);
+		setConnect(true);
+	}
 
 	const [openMenu, setOpenMenu] = useState(false);
 
 	const aes = new pidCrypt.AES.CBC();
 
+	function logOut(e) {
+		e.preventDefault();
+		console.log(1);
+		sessionStorage.clear();
+		location.reload();
+	}
+
+	function addCash() {
+		dispatch({type: "openConnect"});
+	}
+
+	function close() {
+		dispatch({type: "closeConnect"});
+		console.log(connectWallet);
+	}
+
+	function logCash() {
+		console.log(connectWallet);
+	}
+
 	return (
 		<Router>
-			<div className={connectWal ? "error-bg" : "hide"}>
-				<span onClick={() => setConnect(false)}></span>
+			<div className={connectWallet ? "error-bg" : "hide"}>
+				<span onClick={close}></span>
 			</div>
-			<div className={connectWal ? "App-error" : "App"}>
-				<div className="header header2">
-					<div className="container-header">
-						<div className="acc-info">
-							<div class="acc-info1">
-								<a href="#/">
-									<div class="name">NFTour</div>
-								</a>
-								{sessionStorage.address ? (
-									<div class="wallet">
-										<div className="acc-status">Connected:</div>
-										<div className="acc-wallet">{localStorage.address}</div>
-										<div
-											className={
-												openMenu ? "btn-menu btn-menu-active" : "btn-menu"
-											}
-											onClick={() => setOpenMenu(!openMenu)}
-										></div>
-
-										<div className={openMenu ? "menu-info" : "hide"}>
-											<a href="#/profile">Your Profile</a>
-										</div>
-									</div>
-								) : (
-									<div class="wallet">
-										<div
-											class="button-1-square"
-											onClick={() => setConnect(true)}
-										>
-											Connect
-										</div>
-									</div>
-								)}
-							</div>
-
-							<div class="pages">
-								<a href="#/">
-									<div class="page-element active">Home</div>
-								</a>
-								<a href="#/load-nft">
-									<div class="page-element">NFT Generator</div>
-								</a>
-								<a href="#/collection-market">
-									<div class="page-element">NFT Collection Market</div>
-								</a>
-								<div class="page-element">FAQ</div>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div className={connectWal ? "" : "hide"}>
-					<ConnectWalletPage></ConnectWalletPage>
-				</div>
+			<div className={connectWallet ? "App-error" : "App"}>
+				<Header activeCat={0}></Header>
 
 				<div class="main-screen">
 					<div class="container">
@@ -95,7 +78,12 @@ function WelcomeNftPage() {
 								code in user-friendly interface.
 							</div>
 							<div class="buttons">
-								<a href="#/get-start">
+								<a
+									onClick={(ev) => {
+										ev.preventDefault();
+										history.push("/get-start");
+									}}
+								>
 									<button class="button-1">Get started</button>
 								</a>
 								<Link to="video">
@@ -184,9 +172,7 @@ function WelcomeNftPage() {
 								NFT art creator’s main goal is to invent, and using NFTour
 								artists
 							</div>
-							<Element name="video" className="element">
-								test 1
-							</Element>
+							<Element name="video" className="element"></Element>
 							<div class="video">
 								<iframe
 									src="https://www.youtube.com/embed/YHatcktJM8I"
@@ -200,31 +186,7 @@ function WelcomeNftPage() {
 					</div>
 				</div>
 
-				<div class="footer">
-					<div class="container-header">
-						<div class="footer-1">
-							<div class="name">RADIANCETEAM</div>
-							<div class="copyright">
-								© 2021, radianceteam.com
-								<br />
-								Terms of Service
-								<br />
-								Privacy Policy
-							</div>
-						</div>
-						<div class="footer-2">
-							<div class="pages">
-								<a href="https://t.me/DefiSpacecom">
-									<div class="page-element">Telegram</div>
-								</a>
-							</div>
-							<div class="email">
-								<span>For corporation</span>
-								<div class="text">info@radianceteam.com</div>
-							</div>
-						</div>
-					</div>
-				</div>
+				<Footer></Footer>
 			</div>
 		</Router>
 	);

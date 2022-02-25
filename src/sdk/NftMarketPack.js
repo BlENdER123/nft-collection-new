@@ -19,6 +19,7 @@ import {Collections, InsertEmoticon} from "@material-ui/icons";
 import {DataContract} from "./collection contracts/DataContract.js";
 import {NFTMarketContract} from "./collection contracts/NftMarketContract.js";
 import {NftRootColectionContract} from "./collection contracts/NftRootColectionContract.js";
+import {OfferContract} from "./collection contracts/OfferContract.js";
 
 import Header from "./Header";
 import Footer from "./Footer";
@@ -57,7 +58,7 @@ function base64ToHex(str) {
 	return result.toUpperCase();
 }
 
-function CollectionMarketPack() {
+function NftMarketPack() {
 	const dispatch = useDispatch();
 	const connectWallet = useSelector((state) => state.connectWallet);
 	const params = useParams();
@@ -90,23 +91,40 @@ function CollectionMarketPack() {
 	async function getCollection() {
 		console.log(addrCol);
 
-		const acc = new Account(NftRootColectionContract, {
+		let tempCol;
+
+		const tempOffer = new Account(OfferContract, {
 			address: addrCol,
 			signer: signerNone(),
 			client,
 		});
 
-		let tempCol;
+		let addrData;
 
 		try {
-			const response = await acc.runLocal("getInfo", {});
+			const response = await tempOffer.runLocal("getInfo", {});
+			let value0 = response;
+			addrData = response.decoded.output.addrNft;
+			console.log("value0", value0);
+		} catch (e) {
+			console.log("catch E", e);
+		}
+
+		const tempAcc = new Account(DataContract, {
+			address: addrData,
+			signer: signerNone(),
+			client,
+		});
+
+		try {
+			const response = await tempAcc.runLocal("getInfo", {});
 			let value0 = response;
 			let data = response.decoded.output;
 			tempCol = {
+				name: data.name,
+				desc: data.descriprion,
 				addrAuth: data.addrAuthor,
 				addrOwner: data.addrOwner,
-				desc: data.description,
-				name: data.name,
 			};
 			console.log("value0", value0);
 		} catch (e) {
@@ -128,7 +146,7 @@ function CollectionMarketPack() {
 		});
 	}
 
-	async function openPack() {
+	async function buyPack() {
 		let decrypted = aes.decryptText(sessionStorage.getItem("seedHash"), "5555");
 
 		const clientAcc = new Account(DEXClientContract, {
@@ -139,18 +157,18 @@ function CollectionMarketPack() {
 
 		try {
 			const {body} = await client.abi.encode_message_body({
-				abi: {type: "Contract", value: NftRootColectionContract.abi},
+				abi: {type: "Contract", value: OfferContract.abi},
 				signer: {type: "None"},
 				is_internal: true,
 				call_set: {
-					function_name: "mintNft",
+					function_name: "Buy",
 					input: {},
 				},
 			});
 
 			const res = await clientAcc.run("sendTransaction", {
 				dest: addrCol,
-				value: 800000000,
+				value: 1000000000,
 				bounce: true,
 				flags: 3,
 				payload: body,
@@ -215,8 +233,8 @@ function CollectionMarketPack() {
 						NFTs from the selected collection
 					</div>
 
-					<div class="button-1-square" onClick={openPack}>
-						Buy & Open Pack
+					<div class="button-1-square" onClick={buyPack}>
+						Buy
 					</div>
 
 					{/* <div class="nft-collection">
@@ -239,4 +257,4 @@ function CollectionMarketPack() {
 	);
 }
 
-export default CollectionMarketPack;
+export default NftMarketPack;

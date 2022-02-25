@@ -2,7 +2,14 @@ import React, {useState} from "react";
 import {HashRouter as Router, Redirect} from "react-router-dom";
 //import {main_screen_bg} from "../sdk/img/screenbg1.png"
 
+import Header from "./Header";
+import Footer from "./Footer";
+
+import {useDispatch, useSelector} from "react-redux";
+
 function HowPage() {
+	const dispatch = useDispatch();
+	const connectWallet = useSelector((state) => state.connectWallet);
 	const [curentMode, setCurentMode] = useState(0);
 
 	const [redirect, setRedirect] = useState([false, false]);
@@ -21,41 +28,18 @@ function HowPage() {
 		setRedirect(temp);
 	}
 
+	function close() {
+		dispatch({type: "closeConnect"});
+		console.log(connectWallet);
+	}
+
 	return (
 		<Router>
-			<div className="App2">
-				<div className="header header2">
-					<div className="container-header">
-						<div className="acc-info">
-							<div class="acc-info1">
-								<a href="#/">
-									<div class="name">NFTour</div>
-								</a>
-								{localStorage.address ? (
-									<div class="wallet">
-										<div className="acc-status">Connected:</div>
-										<div className="acc-wallet">{localStorage.address}</div>
-									</div>
-								) : (
-									""
-								)}
-							</div>
-
-							<div class="pages">
-								<a href="#/">
-									<div class="page-element">Home</div>
-								</a>
-								<a href="#/load-nft">
-									<div class="page-element">NFT Generator</div>
-								</a>
-								<a href="#/collection-market">
-									<div class="page-element">NFT Collection Market</div>
-								</a>
-								<div class="page-element">FAQ</div>
-							</div>
-						</div>
-					</div>
-				</div>
+			<div className={connectWallet ? "error-bg" : "hide"}>
+				<span onClick={close}></span>
+			</div>
+			<div className={connectWallet ? "App-error" : "App2"}>
+				<Header activeCat={100}></Header>
 
 				<div class="start-screen">
 					<div
@@ -155,33 +139,7 @@ function HowPage() {
 				{redirect[0] ? <Redirect to="/load-nft" /> : ""}
 				{redirect[1] ? <Redirect to="/collection-market" /> : ""}
 
-				<div class="footer">
-					<div class="container-header">
-						<div class="footer-1">
-							<div class="name">RADIANCETEAM</div>
-							<div class="copyright">
-								© 2021, radianceteam.com
-								<br />
-								Terms of Service
-								<br />
-								Privacy Policy
-							</div>
-						</div>
-						<div class="footer-2">
-							<div class="pages">
-								<div class="page-element active">Home</div>
-								<div class="page-element">App</div>
-								<div class="page-element">FAQ</div>
-								<div class="page-element">Twitter</div>
-								<div class="page-element">Facebook</div>
-							</div>
-							<div class="email">
-								<span>For corparation</span>
-								<div class="text">info@radianceteam.com</div>
-							</div>
-						</div>
-					</div>
-				</div>
+				<Footer></Footer>
 			</div>
 		</Router>
 	);

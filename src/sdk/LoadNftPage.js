@@ -1,8 +1,10 @@
 import React, {useContext, useState} from "react";
-import {useSelector, useDispatch} from "react-redux";
-import {HashRouter as Router, Redirect} from "react-router-dom";
+import {HashRouter as Router, Redirect, useHistory} from "react-router-dom";
 import Context from "./Context";
-import setImg from "../store/actions/nftCollection";
+import Header from "./Header";
+import Footer from "./Footer";
+
+import {useDispatch, useSelector} from "react-redux";
 //import 'idempotent-babel-polyfill';
 
 const axios = require("axios");
@@ -12,25 +14,6 @@ const FormData = require("form-data");
 const pinataKey = "0a2ed9f679a6c395f311";
 const pinataSecretKey =
 	"7b53c4d13eeaf7063ac5513d4c97c4f530ce7e660f0c147ab5d6aee6da9a08b9";
-
-// const testAuthentication = () => {
-//     const url = `https://api.pinata.cloud/data/testAuthentication`;
-//     return axios
-//         .get(url, {
-//             headers: {
-//                 pinata_api_key: '0a2ed9f679a6c395f311',
-//                 pinata_secret_api_key: '7b53c4d13eeaf7063ac5513d4c97c4f530ce7e660f0c147ab5d6aee6da9a08b9'
-//             }
-//         })
-//         .then(function (response) {
-//             //handle your response here
-// 			console.log(response);
-//         })
-//         .catch(function (error) {
-//             //handle error here
-// 			console.error(error);
-//         });
-// };
 
 class MyClass {
 	constructor(
@@ -66,6 +49,10 @@ class MyClass {
 
 function LoadNftPage() {
 	//const {status} = useContext(Context);
+	let history = useHistory();
+
+	const dispatch = useDispatch();
+	const connectWallet = useSelector((state) => state.connectWallet);
 
 	const [classArr1, setClassArr1] = useState([
 		new MyClass("background", true, [], [], [], 0, 0, 0, 0, 0),
@@ -472,73 +459,7 @@ function LoadNftPage() {
 			return;
 		}
 
-		// for (let i = 0; i < classArr1.length; i++) {
-		// 	if(i!==0) {
-		// 		if (classArr1[i].height > height || classArr1[i].width > width) {
-		// 			setErrorModal({
-		// 				hidden: true,
-		// 				message: "The selected size are smaller than your images",
-		// 			});
-		// 			return;
-		// 		}
-		// 	}
-		// }
-
-		// let tempArr = [];
-		// for (let i = 0; i < classArr1.length; i++) {
-		// 	let temp = classArr1[i];
-		// 	if (i == 0) {
-		// 		if (temp.imgs[0] == undefined) {
-		// 			console.log("Background is empty");
-		// 		} else {
-
-		// 			for(let j = 0; j < classArr1[0].imgs.length; j++) {
-		// 				var image = new Image();
-		// 				image.src = getSrc(classArr1[0].imgs[j]);
-		// 				image.onload = function () {
-		// 					//console.log(image.width);
-
-		// 					var canvas = document.createElement("canvas");
-		// 					canvas.width = width;
-		// 					canvas.height = height;
-
-		// 					var ctx = canvas.getContext("2d");
-		// 					ctx.drawImage(image, 0, 0, width, height);
-
-		// 					var dataURL = canvas.toDataURL("image/png");
-
-		// 					//console.log(dataURL.replace(/^data:image\/(png|jpg);base64,/, ""));
-
-		// 					let src = dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
-		// 					tempBg.push(src);
-		// 					//console.log(src);
-		// 					let tempbb = tempBg;
-		// 					tempbb.push(src);
-		// 					setTempBg(tempbb);
-		// 					//setSrc(URL.createObjectURL(file));
-		// 				};
-		// 			}
-
-		// 			// for(let i = 0; i < temp.imgs.length; i++) {
-		// 			// 	temp.imgs[i] = tempBg[i];
-		// 			// }
-		// 			// console.log(temp.imgs);
-		// 			console.log(tempBg);
-		// 			temp.imgs = tempBg;
-		// 		}
-		// 	}
-		// 	tempArr.push(temp);
-		// }
-		// console.log(tempArr);
-		// setClassArr1(tempArr);
-
-		// console.log(tempBg);
-
-		setRedirect(true);
 		console.log(classArr1);
-
-		// window.nfts = classArr1;
-		// console.log(window.nfts);
 
 		localStorage.setItem("class", JSON.stringify(classArr1));
 		localStorage.setItem("width", width);
@@ -551,18 +472,9 @@ function LoadNftPage() {
 				projectDescription: projectDescription,
 			}),
 		);
-		// try {
-		// 	localStorage.setItem("class", JSON.stringify(classArr1));
-		// 	localStorage.setItem("width", width);
-		// 	localStorage.setItem("height", height);
-		// 	localStorage.setItem("curentLayer", curentLayer);
 
-		// } catch(e) {
-		// 	setErrorModal({
-		// 		hidden: true,
-		// 		message: "Your images are larger than 5 MB"
-		// 	})
-		// }
+		history.push("/nft-customization");
+		// setRedirect(true);
 	}
 
 	function closeError() {
@@ -591,52 +503,30 @@ function LoadNftPage() {
 	// 	});
 	// }
 
+	function close() {
+		dispatch({type: "closeConnect"});
+		console.log(connectWallet);
+	}
+
 	return (
 		<Router>
 			<div
 				className={
-					errorModal.hidden === true || connect === true ? "error-bg" : "hide"
+					errorModal.hidden === true || connect === true || connectWallet
+						? "error-bg"
+						: "hide"
 				}
-			></div>
+			>
+				<span onClick={close}></span>
+			</div>
 			<div
 				className={
-					errorModal.hidden === true || connect === true
+					errorModal.hidden === true || connect === true || connectWallet
 						? "App-error"
 						: "App App2"
 				}
 			>
-				<div className="header header2">
-					<div className="container-header">
-						<div className="acc-info">
-							<div class="acc-info1">
-								<a href="#/">
-									<div class="name">NFTour</div>
-								</a>
-								{localStorage.address ? (
-									<div class="wallet">
-										<div className="acc-status">Connected:</div>
-										<div className="acc-wallet">{localStorage.address}</div>
-									</div>
-								) : (
-									""
-								)}
-							</div>
-
-							<div class="pages">
-								<a href="#/">
-									<div class="page-element">Home</div>
-								</a>
-								<a href="#/load-nft">
-									<div class="page-element active">NFT Generator</div>
-								</a>
-								<a href="#/collection-market">
-									<div class="page-element">NFT Collection Market</div>
-								</a>
-								<div class="page-element">FAQ</div>
-							</div>
-						</div>
-					</div>
-				</div>
+				<Header activeCat={1}></Header>
 
 				<div class="constructors">
 					<div class="container-header">
@@ -834,31 +724,7 @@ function LoadNftPage() {
 					</div>
 				</div>
 
-				<div class="footer">
-					<div class="container-header">
-						<div class="footer-1">
-							<div class="name">RADIANCETEAM</div>
-							<div class="copyright">
-								© 2021, radianceteam.com
-								<br />
-								Terms of Service
-								<br />
-								Privacy Policy
-							</div>
-						</div>
-						<div class="footer-2">
-							<div class="pages">
-								<a href="https://t.me/DefiSpacecom">
-									<div class="page-element">Telegram</div>
-								</a>
-							</div>
-							<div class="email">
-								<span>For corporation</span>
-								<div class="text">info@radianceteam.com</div>
-							</div>
-						</div>
-					</div>
-				</div>
+				<Footer></Footer>
 			</div>
 		</Router>
 	);

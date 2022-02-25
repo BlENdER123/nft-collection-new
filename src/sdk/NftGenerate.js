@@ -1,6 +1,11 @@
 import React, {useState} from "react";
-import {HashRouter as Router, Redirect} from "react-router-dom";
+import {HashRouter as Router, Redirect, useHistory} from "react-router-dom";
 import mergeImages from "merge-images";
+
+import Header from "./Header";
+import Footer from "./Footer";
+
+import {useDispatch, useSelector} from "react-redux";
 
 const axios = require("axios");
 //const fs = require('fs');
@@ -13,6 +18,11 @@ const pinataSecretKey =
 let nftArr = [];
 
 function NftCustomization() {
+	let history = useHistory();
+
+	const dispatch = useDispatch();
+	const connectWallet = useSelector((state) => state.connectWallet);
+
 	let arr = JSON.parse(localStorage.getItem("class"));
 
 	const [classArr, setClassArr] = useState(arr);
@@ -20,6 +30,7 @@ function NftCustomization() {
 	const [contrBg, setContrBg] = useState(false);
 
 	const [collection, setCollection] = useState([]);
+	const [collectionName, setCollectionName] = useState([]);
 
 	const [alert, setAlert] = useState({
 		hidden: false,
@@ -240,6 +251,10 @@ function NftCustomization() {
 		console.log(tempCollection);
 
 		setCollection(tempCollection);
+
+		let tempName = collectionName;
+		tempName.push(undefined);
+		setCollectionName(tempName);
 	}
 
 	function getSrc(src) {
@@ -433,6 +448,17 @@ function NftCustomization() {
 		});
 	}
 
+	function changeNameCol(index, value) {
+		console.log(index, value);
+
+		let tempName = collectionName;
+
+		tempName[index] = value;
+
+		setCollectionName(tempName);
+		console.log(tempName);
+	}
+
 	function logData() {
 		console.log(collection);
 
@@ -463,10 +489,31 @@ function NftCustomization() {
 			return;
 		}
 
+		console.log(collectionName);
+
+		for (let i = 0; i < collectionName.length; i++) {
+			if (collectionName[i] == "" || collectionName[i] == undefined) {
+				console.log("Set a name for each nft");
+				setErrorModal({
+					hidden: true,
+					message: "Set a name for each nft",
+				});
+				return;
+			}
+		}
+
 		sessionStorage.setItem("colPrice", colPrice);
 		sessionStorage.setItem("royalty", royalty);
-		setRedirect(true);
-		localStorage.setItem("collection", JSON.stringify(collection));
+		sessionStorage.setItem("collection", JSON.stringify(collection));
+		sessionStorage.setItem("collectionName", JSON.stringify(collectionName));
+
+		// setRedirect(true);
+		history.push("/nft-collection");
+	}
+
+	function close() {
+		dispatch({type: "closeConnect"});
+		console.log(connectWallet);
 	}
 
 	return (
@@ -475,40 +522,19 @@ function NftCustomization() {
 				{alert.message}
 			</div>
 
-			<div className={errorModal.hidden === true ? "error-bg" : "hide"}></div>
-			<div className={errorModal.hidden === true ? "App-error" : "App App2"}>
-				<div className="header header2">
-					<div className="container-header">
-						<div className="acc-info">
-							<div class="acc-info1">
-								<a href="#/">
-									<div class="name">NFTour</div>
-								</a>
-								{localStorage.address ? (
-									<div class="wallet">
-										<div className="acc-status">Connected:</div>
-										<div className="acc-wallet">{localStorage.address}</div>
-									</div>
-								) : (
-									""
-								)}
-							</div>
-
-							<div class="pages">
-								<a href="#/">
-									<div class="page-element">Home</div>
-								</a>
-								<a href="#/load-nft">
-									<div class="page-element active">NFT Generator</div>
-								</a>
-								<a href="#/collection-market">
-									<div class="page-element">NFT Collection Market</div>
-								</a>
-								<div class="page-element">FAQ</div>
-							</div>
-						</div>
-					</div>
-				</div>
+			<div
+				className={
+					errorModal.hidden === true || connectWallet ? "error-bg" : "hide"
+				}
+			>
+				<span onClick={close}></span>
+			</div>
+			<div
+				className={
+					errorModal.hidden === true || connectWallet ? "App-error" : "App App2"
+				}
+			>
+				<Header activeCat={1}></Header>
 
 				<div class="constructors">
 					<div class="container-header">
@@ -658,31 +684,26 @@ function NftCustomization() {
 					{redirect ? <Redirect to="/nft-collection" /> : ""}
 				</div>
 
-				<div class="footer">
-					<div class="container-header">
-						<div class="footer-1">
-							<div class="name">RADIANCETEAM</div>
-							<div class="copyright">
-								© 2021, radianceteam.com
-								<br />
-								Terms of Service
-								<br />
-								Privacy Policy
-							</div>
-						</div>
-						<div class="footer-2">
-							<div class="pages">
-								<a href="https://t.me/DefiSpacecom">
-									<div class="page-element">Telegram</div>
-								</a>
-							</div>
-							<div class="email">
-								<span>For corporation</span>
-								<div class="text">info@radianceteam.com</div>
-							</div>
-						</div>
-					</div>
+				<div class="collection-preview">
+					<div class="title">Preview Collection</div>
+					{collection.length == 0 ? (
+						<div>Null</div>
+					) : (
+						collection.map((item, index) => {
+							return (
+								<div class="preview-item">
+									<img src={item} />
+									<div className="title">Name:</div>
+									<input
+										onChange={(ev) => changeNameCol(index, ev.target.value)}
+									/>
+								</div>
+							);
+						})
+					)}
 				</div>
+
+				<Footer></Footer>
 			</div>
 		</Router>
 	);

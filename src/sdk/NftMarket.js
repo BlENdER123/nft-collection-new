@@ -12,6 +12,9 @@ import {signerKeys, TonClient, signerNone} from "@tonclient/core";
 import {DataContract} from "./collection contracts/DataContract.js";
 import {NFTMarketContract} from "./collection contracts/NftMarketContract.js";
 import {NftRootColectionContract} from "./collection contracts/NftRootColectionContract.js";
+import {IndexOfferContract} from "./collection contracts/IndexOfferContract.js";
+import {IndexContract} from "./collection contracts/IndexContract.js";
+import {OfferContract} from "./collection contracts/OfferContract.js";
 
 import Header from "./Header";
 import Footer from "./Footer";
@@ -36,7 +39,7 @@ async function getClientKeys(phrase) {
 	return test;
 }
 
-function CollectionMarket() {
+function NftMarket() {
 	let history = useHistory();
 
 	const dispatch = useDispatch();
@@ -67,9 +70,9 @@ function CollectionMarket() {
 		});
 
 		try {
-			const response = await acc.runLocal("resolveCodeHashNftRoot", {});
+			const response = await acc.runLocal("resolveCodeHashOffer", {});
 			let value0 = response;
-			rootCode = response.decoded.output.codeHashData.split("0x")[1];
+			rootCode = response.decoded.output.codeHashOffer.split("0x")[1];
 			console.log("value0", value0);
 		} catch (e) {
 			console.log("catch E", e);
@@ -98,11 +101,36 @@ function CollectionMarket() {
 			.then((r) => r.json())
 			.then(async (data) => {
 				let tempData = data.data.accounts;
+				console.log(data);
+
+				let addrsData = [];
+				let addrsOffer = [];
 
 				for (let i = 0; i < tempData.length; i++) {
 					let tempAddr = tempData[i].id;
 
-					const tempAcc = new Account(NftRootColectionContract, {
+					addrsOffer.push(tempAddr);
+
+					const tempAcc = new Account(OfferContract, {
+						address: tempAddr,
+						signer: signerNone(),
+						client,
+					});
+
+					try {
+						const response = await tempAcc.runLocal("getInfo", {});
+						let value0 = response;
+						addrsData.push(response.decoded.output.addrNft);
+						console.log("value0", value0);
+					} catch (e) {
+						console.log("catch E", e);
+					}
+				}
+
+				for (let i = 0; i < addrsData.length; i++) {
+					let tempAddr = addrsData[i];
+
+					const tempAcc = new Account(DataContract, {
 						address: tempAddr,
 						signer: signerNone(),
 						client,
@@ -114,9 +142,10 @@ function CollectionMarket() {
 						let data = response.decoded.output;
 						tempCols.push({
 							name: data.name,
-							desc: data.description,
-							icon: data.icon,
-							addrCol: tempAddr,
+							desc: data.descriprion,
+							icon: data.meta.json,
+							addrNft: tempAddr,
+							addrOffer: addrsOffer[i],
 						});
 						console.log("value0", value0);
 					} catch (e) {
@@ -134,9 +163,7 @@ function CollectionMarket() {
 	}, []);
 
 	function openCollection(collection) {
-		console.log(collection);
-
-		history.push("/collection-market-pack/" + collection);
+		history.push("/nft-market-pack/" + collection);
 	}
 
 	function close() {
@@ -156,7 +183,7 @@ function CollectionMarket() {
 					!mintNftData.hidden || connectWallet ? "App-error" : "App App2"
 				}
 			>
-				<Header active={2}></Header>
+				<Header activeCat={2}></Header>
 
 				<div
 					className={
@@ -230,9 +257,9 @@ function CollectionMarket() {
 											<div
 												class="button-1-square"
 												// onClick={() => setMintNftData({hidden: false})}
-												onClick={() => openCollection(item.addrCol)}
+												onClick={() => openCollection(item.addrOffer)}
 											>
-												Buy & Open pack
+												Buy
 											</div>
 										</div>
 									</div>
@@ -252,4 +279,4 @@ function CollectionMarket() {
 	);
 }
 
-export default CollectionMarket;
+export default NftMarket;

@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import {createStore} from "redux";
 import {composeWithDevTools} from "redux-devtools-extension";
-import rootReducer from "./store/reducers";
+
 import {BrowserRouter} from "react-router-dom";
 import {Provider} from "react-redux";
 import {SnackbarProvider} from "notistack";
@@ -13,7 +13,22 @@ import "./index.scss";
 import "bootstrap";
 import App from "./App";
 
-export const store = createStore(rootReducer, composeWithDevTools());
+const defaultState = {
+	connectWallet: false,
+};
+
+const reducer = (state = defaultState, action) => {
+	switch (action.type) {
+		case "openConnect":
+			return {...state, connectWallet: true};
+		case "closeConnect":
+			return {...state, connectWallet: false};
+		default:
+			return state;
+	}
+};
+
+export const store = createStore(reducer);
 
 ReactDOM.render(
 	<Provider store={store}>

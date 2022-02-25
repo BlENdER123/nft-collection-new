@@ -14,6 +14,9 @@ import {NFTMarketContract} from "./collection contracts/NftMarketContract.js";
 import {NftRootColectionContract} from "./collection contracts/NftRootColectionContract.js";
 import {IndexContract} from "./collection contracts/IndexContract.js";
 
+import Header from "./Header";
+import Footer from "./Footer";
+
 const config = require("./config.json");
 
 TonClient.useBinaryLibrary(libWeb);
@@ -229,55 +232,7 @@ function NftDetails() {
 				<span onClick={() => setConnect(false)}></span>
 			</div>
 			<div className={connectWal ? "App-error" : "App App2"}>
-				<div className="header header2">
-					<div className="container-header">
-						<div className="acc-info">
-							<div class="acc-info1">
-								<a href="#/">
-									<div class="name">NFTour</div>
-								</a>
-								{sessionStorage.address ? (
-									<div class="wallet">
-										<div className="acc-status">Connected:</div>
-										<div className="acc-wallet">{localStorage.address}</div>
-										<div
-											className={
-												openMenu ? "btn-menu btn-menu-active" : "btn-menu"
-											}
-											onClick={() => setOpenMenu(!openMenu)}
-										></div>
-
-										<div className={openMenu ? "menu-info" : "hide"}>
-											Your Profile
-										</div>
-									</div>
-								) : (
-									<div class="wallet">
-										<div
-											class="button-1-square"
-											onClick={() => setConnect(true)}
-										>
-											Connect
-										</div>
-									</div>
-								)}
-							</div>
-
-							<div class="pages">
-								<a href="#/">
-									<div class="page-element active">Home</div>
-								</a>
-								<a href="#/load-nft">
-									<div class="page-element">NFT Generator</div>
-								</a>
-								<a href="#/collection-market">
-									<div class="page-element">NFT Collection Market</div>
-								</a>
-								<div class="page-element">FAQ</div>
-							</div>
-						</div>
-					</div>
-				</div>
+				<Header activeCat={0}></Header>
 
 				<div className={connectWal ? "" : "hide"}>
 					<ConnectWalletPage></ConnectWalletPage>
@@ -355,31 +310,7 @@ function NftDetails() {
 					</div>
 				</div>
 
-				<div class="footer">
-					<div class="container-header">
-						<div class="footer-1">
-							<div class="name">RADIANCETEAM</div>
-							<div class="copyright">
-								© 2021, radianceteam.com
-								<br />
-								Terms of Service
-								<br />
-								Privacy Policy
-							</div>
-						</div>
-						<div class="footer-2">
-							<div class="pages">
-								<a href="https://t.me/DefiSpacecom">
-									<div class="page-element">Telegram</div>
-								</a>
-							</div>
-							<div class="email">
-								<span>For corporation</span>
-								<div class="text">info@radianceteam.com</div>
-							</div>
-						</div>
-					</div>
-				</div>
+				<Footer></Footer>
 			</div>
 		</Router>
 	);

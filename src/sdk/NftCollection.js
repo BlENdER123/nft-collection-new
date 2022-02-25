@@ -20,6 +20,11 @@ import {DataContract} from "./collection contracts/DataContract.js";
 import {NFTMarketContract} from "./collection contracts/NftMarketContract.js";
 import {NftRootColectionContract} from "./collection contracts/NftRootColectionContract.js";
 
+import Header from "./Header";
+import Footer from "./Footer";
+
+import {useDispatch, useSelector} from "react-redux";
+
 TonClient.useBinaryLibrary(libWeb);
 
 const axios = require("axios");
@@ -55,9 +60,14 @@ function base64ToHex(str) {
 }
 
 function NftCollection() {
-	let arr = JSON.parse(localStorage.getItem("collection"));
+	const dispatch = useDispatch();
+	const connectWallet = useSelector((state) => state.connectWallet);
+
+	let arr = JSON.parse(sessionStorage.getItem("collection"));
+	let arrName = JSON.parse(sessionStorage.getItem("collectionName"));
 
 	const [collection, setCollection] = useState(arr);
+	const [collectionName, setCollectionName] = useState(arrName);
 
 	const [errorModal, setErrorModal] = useState({
 		hidden: false,
@@ -72,6 +82,7 @@ function NftCollection() {
 		"0:0000000000000000000000000000000000000000000000000000000000000000";
 
 	async function deployCollection() {
+		console.log(1);
 		const pinataKey = "0a2ed9f679a6c395f311";
 		const pinataSecretKey =
 			"7b53c4d13eeaf7063ac5513d4c97c4f530ce7e660f0c147ab5d6aee6da9a08b9";
@@ -93,6 +104,11 @@ function NftCollection() {
 		console.log(deployData);
 
 		// save avatar to IPFS
+
+		if (avatar == undefined || avatar == "") {
+			console.log("Enter avatar");
+			return;
+		}
 
 		await fetch(avatar)
 			.then((res) => res.blob())
@@ -222,7 +238,7 @@ function NftCollection() {
 										function_name: "deployMetadata",
 										input: {
 											wid: i,
-											name: deployData.projectName,
+											name: collectionName[i],
 											description: deployData.projectDescription,
 											contentHash: 1,
 											mimeType: "test",
@@ -242,7 +258,7 @@ function NftCollection() {
 
 								const res = await clientAcc.run("sendTransaction", {
 									dest: nftRoot,
-									value: 1200000000,
+									value: 1400000000,
 									bounce: true,
 									flags: 3,
 									payload: body,
@@ -285,42 +301,26 @@ function NftCollection() {
 		};
 	}
 
+	function close() {
+		dispatch({type: "closeConnect"});
+		console.log(connectWallet);
+	}
+
 	return (
 		<Router>
-			<div className={errorModal.hidden === true ? "error-bg" : "hide"}></div>
-			<div className={errorModal.hidden === true ? "App-error" : "App App2"}>
-				<div className="header header2">
-					<div className="container-header">
-						<div className="acc-info">
-							<div class="acc-info1">
-								<a href="#/">
-									<div class="name">NFTour</div>
-								</a>
-								{localStorage.address ? (
-									<div class="wallet">
-										<div className="acc-status">Connected:</div>
-										<div className="acc-wallet">{localStorage.address}</div>
-									</div>
-								) : (
-									""
-								)}
-							</div>
-
-							<div class="pages">
-								<a href="#/">
-									<div class="page-element">Home</div>
-								</a>
-								<a href="#/load-nft">
-									<div class="page-element active">NFT Generator</div>
-								</a>
-								<a href="#/collection-market">
-									<div class="page-element">NFT Collection Market</div>
-								</a>
-								<div class="page-element">FAQ</div>
-							</div>
-						</div>
-					</div>
-				</div>
+			<div
+				className={
+					errorModal.hidden === true || connectWallet ? "error-bg" : "hide"
+				}
+			>
+				<span onClick={close}></span>
+			</div>
+			<div
+				className={
+					errorModal.hidden === true || connectWallet ? "App-error" : "App App2"
+				}
+			>
+				<Header activeCat={1}></Header>
 
 				<div class="collection">
 					<div
@@ -364,7 +364,7 @@ function NftCollection() {
 					</div>
 
 					<div class="nft-collection">
-						{collection.map((item) => {
+						{collection.map((item, index) => {
 							return (
 								<div
 									class="nft-element"
@@ -376,37 +376,14 @@ function NftCollection() {
 									}
 								>
 									<img src={item} />
+									<div class="title">{collectionName[index]}</div>
 								</div>
 							);
 						})}
 					</div>
 				</div>
 
-				<div class="footer">
-					<div class="container-header">
-						<div class="footer-1">
-							<div class="name">RADIANCETEAM</div>
-							<div class="copyright">
-								© 2021, radianceteam.com
-								<br />
-								Terms of Service
-								<br />
-								Privacy Policy
-							</div>
-						</div>
-						<div class="footer-2">
-							<div class="pages">
-								<a href="https://t.me/DefiSpacecom">
-									<div class="page-element">Telegram</div>
-								</a>
-							</div>
-							<div class="email">
-								<span>For corporation</span>
-								<div class="text">info@radianceteam.com</div>
-							</div>
-						</div>
-					</div>
-				</div>
+				<Footer></Footer>
 			</div>
 		</Router>
 	);

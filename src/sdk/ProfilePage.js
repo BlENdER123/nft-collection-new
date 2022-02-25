@@ -1,6 +1,6 @@
 import React, {useState, useEffect, PropTypes} from "react";
 import {connect} from "react-redux";
-import {HashRouter as Router} from "react-router-dom";
+import {HashRouter as Router, useParams} from "react-router-dom";
 //import {main_screen_bg} from "../sdk/img/screenbg1.png"
 import ConnectWalletPage from "./ConnectWalletPage";
 
@@ -15,6 +15,11 @@ import {DataContract} from "./collection contracts/DataContract.js";
 import {NFTMarketContract} from "./collection contracts/NftMarketContract.js";
 import {NftRootColectionContract} from "./collection contracts/NftRootColectionContract.js";
 import {IndexContract} from "./collection contracts/IndexContract.js";
+
+import Header from "./Header";
+import Footer from "./Footer";
+
+import {useDispatch, useSelector} from "react-redux";
 
 const config = require("./config.json");
 
@@ -39,11 +44,20 @@ async function getClientKeys(phrase) {
 }
 
 function ProfilePage() {
+	const params = useParams();
+
+	const dispatch = useDispatch();
+	const connectWallet = useSelector((state) => state.connectWallet);
+
+	let addrUser = params.address;
+
 	const [connectWal, setConnect] = useState(false);
 
 	const [openMenu, setOpenMenu] = useState(false);
 
 	const [activeCat, setActiveCat] = useState(0);
+
+	const [items, setItems] = useState([0, 0, 0]);
 
 	const [saleModal, setSaleModal] = useState({
 		hidden: true,
@@ -52,6 +66,15 @@ function ProfilePage() {
 	const [salePrice, setSalePrice] = useState(0);
 
 	const [nftCol, setNftCol] = useState([
+		{
+			addrNft: "Null",
+			name: "Null",
+			desc: "Null",
+			image: "Null",
+		},
+	]);
+
+	const [nftSale, setNftSale] = useState([
 		{
 			addrNft: "Null",
 			name: "Null",
@@ -69,13 +92,56 @@ function ProfilePage() {
 			client,
 		});
 
+		// sale nft`s
+
+		let offerCode;
+
+		try {
+			const response = await acc.runLocal("resolveCodeHashIndexOffer", {
+				addrMarket: marketrootAddr,
+				addrOwner: addrUser,
+			});
+			let value0 = response;
+			// offerCode = response.decoded.output.codeHashIndexOffer.split("0x")[1];
+			console.log("value0", value0);
+		} catch (e) {
+			console.log("catch E", e);
+		}
+
+		await fetch("https://net.ton.dev/graphql", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				query: `
+					{accounts(
+					filter:{
+						  code_hash:{
+						  eq:"${offerCode}"
+						}
+					}){
+					  id
+					}}
+				`,
+			}),
+		})
+			.then((r) => r.json())
+			.then(async (data) => {
+				let tempData = data.data.accounts;
+
+				console.log(tempData);
+			});
+
+		// collectible nft`s
+
 		let rootCode;
 
 		try {
 			const response = await acc.runLocal("resolveCodeHashNftRoot", {});
 			let value0 = response;
 			rootCode = response.decoded.output.codeHashData.split("0x")[1];
-			// console.log("value0", value0);
+			console.log("value0", value0);
 		} catch (e) {
 			console.log("catch E", e);
 		}
@@ -118,7 +184,7 @@ function ProfilePage() {
 					const response = await tempAcc.runLocal("resolveCodeHashIndex", {
 						addrRoot:
 							"0:0000000000000000000000000000000000000000000000000000000000000000",
-						addrOwner: sessionStorage.getItem("address"),
+						addrOwner: addrUser,
 					});
 					let value0 = response;
 					hashNFT = response.decoded.output.codeHashIndex.split("0x")[1];
@@ -150,6 +216,15 @@ function ProfilePage() {
 					.then((r) => r.json())
 					.then(async (data) => {
 						console.log(data);
+
+						// set nft length
+						let tempItems = items;
+						tempItems[1] = data.data.accounts.length;
+						setItems(tempItems);
+
+						if (data.data.accounts.length == 0) {
+							return;
+						}
 
 						let tempCol = [];
 
@@ -239,6 +314,11 @@ function ProfilePage() {
 		console.log(salePrice);
 		console.log(saleModal);
 
+		if (salePrice == 0) {
+			alert("Set Sale Price");
+			return;
+		}
+
 		let decrypted = aes.decryptText(sessionStorage.getItem("seedHash"), "5555");
 
 		const clientAcc = new Account(DEXClientContract, {
@@ -270,6 +350,8 @@ function ProfilePage() {
 			client,
 		});
 
+		console.log(addrDataNFT);
+
 		try {
 			const {body} = await client.abi.encode_message_body({
 				abi: {type: "Contract", value: NFTMarketContract.abi},
@@ -286,7 +368,7 @@ function ProfilePage() {
 
 			const res = await clientAcc.run("sendTransaction", {
 				dest: marketrootAddr,
-				value: 1000000000,
+				value: 700000000,
 				bounce: true,
 				flags: 3,
 				payload: body,
@@ -300,7 +382,6 @@ function ProfilePage() {
 
 		try {
 			const response = await marketAcc.runLocal("resolveAddrOffer", {
-				addrOwner: sessionStorage.getItem("address"),
 				addrNft: addrDataNFT,
 			});
 			let value0 = response;
@@ -342,74 +423,46 @@ function ProfilePage() {
 		}
 
 		try {
-			const response = await marketAcc.runLocal("resolveCodeHashNftRoot", {});
+			const response = await marketAcc.runLocal("resolveCodeHashOffer", {});
 			let value0 = response;
 			console.log("value0", value0);
 		} catch (e) {
 			console.log("catch E", e);
 		}
+
+		setSalePrice(0);
+	}
+
+	async function reloadNft() {
+		await getHash();
+	}
+
+	function close() {
+		dispatch({type: "closeConnect"});
+		console.log(connectWallet);
 	}
 
 	return (
 		<Router>
-			<div className={connectWal || !saleModal.hidden ? "error-bg" : "hide"}>
-				<span
+			<div
+				className={
+					connectWal || !saleModal.hidden || connectWallet ? "error-bg" : "hide"
+				}
+			>
+				{/* <span
 					className={connectWal ? "" : "hide"}
 					onClick={() => setConnect(false)}
-				></span>
+				></span> */}
+				<span className={connectWallet ? "" : "hide"} onClick={close}></span>
 			</div>
 			<div
-				className={connectWal || !saleModal.hidden ? "App-error" : "App App2"}
+				className={
+					connectWal || !saleModal.hidden || connectWallet
+						? "App-error"
+						: "App App2"
+				}
 			>
-				<div className="header header2">
-					<div className="container-header">
-						<div className="acc-info">
-							<div class="acc-info1">
-								<a href="#/">
-									<div class="name">NFTour</div>
-								</a>
-								{sessionStorage.address ? (
-									<div class="wallet">
-										<div className="acc-status">Connected:</div>
-										<div className="acc-wallet">{localStorage.address}</div>
-										<div
-											className={
-												openMenu ? "btn-menu btn-menu-active" : "btn-menu"
-											}
-											onClick={() => setOpenMenu(!openMenu)}
-										></div>
-
-										<div className={openMenu ? "menu-info" : "hide"}>
-											Your Profile
-										</div>
-									</div>
-								) : (
-									<div class="wallet">
-										<div
-											class="button-1-square"
-											onClick={() => setConnect(true)}
-										>
-											Connect
-										</div>
-									</div>
-								)}
-							</div>
-
-							<div class="pages">
-								<a href="#/">
-									<div class="page-element active">Home</div>
-								</a>
-								<a href="#/load-nft">
-									<div class="page-element">NFT Generator</div>
-								</a>
-								<a href="#/collection-market">
-									<div class="page-element">NFT Collection Market</div>
-								</a>
-								<div class="page-element">FAQ</div>
-							</div>
-						</div>
-					</div>
-				</div>
+				<Header activeCat={0}></Header>
 
 				<div className={connectWal ? "" : "hide"}>
 					<ConnectWalletPage></ConnectWalletPage>
@@ -422,7 +475,10 @@ function ProfilePage() {
 				>
 					<button
 						className="close"
-						onClick={() => setSaleModal({hidden: true})}
+						onClick={() => {
+							setSalePrice(0);
+							setSaleModal({hidden: true});
+						}}
 					>
 						<span></span>
 						<span></span>
@@ -452,7 +508,7 @@ function ProfilePage() {
 						<div class="text">Profile</div>
 
 						<div class="addr">
-							<span>Your address:</span> {sessionStorage.getItem("address")}
+							<span>Address:</span> {addrUser}
 						</div>
 
 						<div class="nfts">
@@ -478,12 +534,56 @@ function ProfilePage() {
 									</span>
 								</div>
 
-								<div class="items">16 items</div>
+								<button class="btn-main" onClick={reloadNft}>
+									Reload
+								</button>
+
+								<div className={activeCat == 0 ? "items" : "hide"}>
+									{items[0]} items
+								</div>
+								<div className={activeCat == 1 ? "items" : "hide"}>
+									{items[1]} items
+								</div>
+								<div className={activeCat == 2 ? "items" : "hide"}>
+									{items[2]} items
+								</div>
 							</div>
 							<div
 								className={activeCat == 0 ? "nft-category collect-nft" : "hide"}
 							>
-								<div class="null-nft">No NFT`s</div>
+								{nftSale[0].image == "Null" ? (
+									<div class="null-nft">No NFT`s</div>
+								) : (
+									nftSale.map((i) => {
+										return (
+											<div class="nft">
+												<div class="nft-image">
+													<img
+														src={"https://gateway.pinata.cloud/ipfs/" + i.image}
+													/>
+												</div>
+												<div class="nft-content">
+													<div class="name">{i.name}</div>
+													<div class="name-nft">{i.name}</div>
+													<a href="#/nft-details">View Details</a>
+													<button
+														class="btn-main"
+														onClick={() =>
+															setSaleModal({
+																hidden: false,
+																addrNft: i.addrNft,
+																image: i.image,
+																name: i.name,
+															})
+														}
+													>
+														Sale
+													</button>
+												</div>
+											</div>
+										);
+									})
+								)}
 							</div>
 							<div
 								className={activeCat == 1 ? "nft-category collect-nft" : "hide"}
@@ -504,6 +604,7 @@ function ProfilePage() {
 													<div class="name-nft">{i.name}</div>
 													<a href="#/nft-details">View Details</a>
 													<button
+														class="btn-main"
 														onClick={() =>
 															setSaleModal({
 																hidden: false,
@@ -531,31 +632,7 @@ function ProfilePage() {
 					</div>
 				</div>
 
-				<div class="footer">
-					<div class="container-header">
-						<div class="footer-1">
-							<div class="name">RADIANCETEAM</div>
-							<div class="copyright">
-								© 2021, radianceteam.com
-								<br />
-								Terms of Service
-								<br />
-								Privacy Policy
-							</div>
-						</div>
-						<div class="footer-2">
-							<div class="pages">
-								<a href="https://t.me/DefiSpacecom">
-									<div class="page-element">Telegram</div>
-								</a>
-							</div>
-							<div class="email">
-								<span>For corporation</span>
-								<div class="text">info@radianceteam.com</div>
-							</div>
-						</div>
-					</div>
-				</div>
+				<Footer></Footer>
 			</div>
 		</Router>
 	);
