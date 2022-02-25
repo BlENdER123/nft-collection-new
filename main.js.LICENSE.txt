@@ -10,23 +10,9 @@ object-assign
   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
   */
 
-/*!
-  Copyright (c) 2018 Jed Watson.
-  Licensed under the MIT License (MIT), see
-  http://jedwatson.github.io/classnames
-*/
-
 /*!Copyright (c) 2009 pidder <www.pidder.com>*/
 
 /*!Copyright (c) 2009-2015 pidder, https://www.pidder.de											*/
-
-/**
- * A better abstraction over CSS.
- *
- * @copyright Oleg Isonen (Slobodskoi) / Isonen 2014-present
- * @website https://github.com/cssinjs/jss
- * @license MIT
- */
 
 /** @license MUI v5.0.0
  *
