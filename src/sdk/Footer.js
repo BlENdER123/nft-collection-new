@@ -28,7 +28,7 @@ function Footer() {
 						</div>
 					</div>
 					<div class="footer-2">
-						<div class="pages">
+						<div class="pages-f">
 							<a href="https://t.me/DefiSpacecom">
 								<div class="page-element">Telegram</div>
 							</a>

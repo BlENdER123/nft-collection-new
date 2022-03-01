@@ -248,6 +248,8 @@ function LoadNftPage() {
 	}
 
 	function download(event) {
+		event.preventDefault(); // Проверить на мобильном
+
 		let file = event.target.files[0];
 
 		// console.log(sizeImgs);
